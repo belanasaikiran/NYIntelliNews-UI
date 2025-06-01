@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import CategoryButton from "./Components/CategoryButton";
 import type { LucideIcon } from "lucide-react";
+import { convertToBase64, generatePreviewUrl } from "@/app/utils/imageService"
+
 import {
   BookOpen,
   Briefcase,
@@ -89,7 +91,18 @@ const sections = [
 ];
 export default function Home() {
   const [prompt, setPrompt] = useState("");
+  const [image, setImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const router = useRouter();
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImage(file);
+    const previewUrl = await generatePreviewUrl(file);
+    setPreview(previewUrl);
+};
 
   const handleCategoryClick = async (section: string) => {
     // ✅ Navigate to results page with category
@@ -136,6 +149,21 @@ export default function Home() {
           placeholder="Ask IntelliNews anything..."
           className="w-full border text-gray-800 border-[#36362E] rounded px-4 py-2 focus:outline-none focus:ring-2 focus:border-[#36362E] bg-[#E5D7C6]"
         />
+
+
+        <div className="mt-4">
+          <label htmlFor="imageUpload" className="block text-[#36362E] text-lg font-medium mb-2">
+            Or upload an image
+          </label>
+          <input
+            id="imageUpload"
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="w-full border rounded px-4 py-2 bg-[#F3EEE5] text-gray-800 cursor-pointer"
+          />
+        </div>
+
         <button
           type="submit"
           className="mt-4 w-full bg-[#36362E] text-white py-2 rounded hover:bg-[#E5D7C6] hover:text-[#36362E] transition"
