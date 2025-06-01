@@ -1,13 +1,35 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import CategoryButton from "../components/CategoryButton";
+import CategoryButton from "./Components/CategoryButton";
 
 const sections = [
-  "arts", "automobiles", "books", "business", "fashion", "food", "health",
-  "home", "insider", "magazine", "movies", "nyregion", "obituaries",
-  "opinion", "politics", "realestate", "science", "sports", "sundayreview",
-  "technology", "theater", "t-magazine", "travel", "upshot", "us", "world"
+  "arts",
+  "automobiles",
+  "books",
+  "business",
+  "fashion",
+  "food",
+  "health",
+  "home",
+  "insider",
+  "magazine",
+  "movies",
+  "nyregion",
+  "obituaries",
+  "opinion",
+  "politics",
+  "realestate",
+  "science",
+  "sports",
+  "sundayreview",
+  "technology",
+  "theater",
+  "t-magazine",
+  "travel",
+  "upshot",
+  "us",
+  "world",
 ];
 
 export default function Home() {
@@ -36,7 +58,10 @@ export default function Home() {
           />
         ))}
       </div>
-      <form onSubmit={handleSubmit} className="max-w-xl mx-auto bg-white rounded-lg shadow p-6 mb-8">
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-xl mx-auto bg-white rounded-lg shadow p-6 mb-8"
+      >
         <label htmlFor="prompt" className="block text-lg font-medium mb-2">
           Enter your prompt
         </label>

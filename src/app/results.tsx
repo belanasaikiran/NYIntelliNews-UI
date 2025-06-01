@@ -6,13 +6,18 @@ export default function Results() {
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
   const prompt = searchParams.get("prompt");
-  const [headlines, setHeadlines] = useState<any[]>([]);
+  type Headline = {
+    title: string;
+    url: string;
+  };
+
+  const [headlines, setHeadlines] = useState<Headline[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchNews = async () => {
       setLoading(true);
-      let results: any[] = [];
+      let results: Headline[] = [];
       try {
         if (category) {
           // Fetch from both NYT top and Google for category
@@ -47,6 +52,7 @@ export default function Results() {
         }
         setHeadlines(results);
       } catch (err) {
+        console.error(err);
         setHeadlines([]);
       }
       setLoading(false);
