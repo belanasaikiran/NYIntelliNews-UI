@@ -54,18 +54,22 @@ export default function Results() {
   }, [category, prompt]);
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
-      <h1 className="text-2xl font-bold mb-8 text-center text-gray-900">
+    <main className="w-full min-h-screen  text-[#36362E] p-6">
+      <h1 className="text-2xl font-bold mb-8 text-center text-[#36362E]">
         News Results
       </h1>
+
       {loading ? (
         <div className="text-center text-lg">Loading...</div>
       ) : articles.length > 0 ? (
-        <div className="max-w-xl mx-auto bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">
-            Top Articles for {category}
+        <div className="  p-6">
+          <h2 className="text-xl font-semibold mb-4">
+            Top Articles for{" "}
+            <span className="capitalize text-[#36362E]  font-semibold">
+              {category}
+            </span>
           </h2>
-          <div className="flex flex-col gap-3">
+          <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
             {articles.map((article, idx) => (
               <ArticleCard key={idx} {...article} />
             ))}

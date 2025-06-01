@@ -43,62 +43,64 @@ export default function SummaryPage() {
   }, [title]);
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
-      <h1 className="text-2xl font-bold mb-6 text-center text-blue-900">
-        Summary
-      </h1>
+    <main className="min-h-screen w-full  text-[#36362E] ">
       {loading ? (
-        <div className="text-center text-gray-600">Loading...</div>
+        <div className="text-center font-medium">Loading...</div>
       ) : (
-        <>
-          <div className="grid grid-cols-2 ">
-            <div>
-              {relatedArticles.length > 0 && (
-                <div className="max-w-2xl mx-auto bg-white p-4 rounded shadow">
-                  <h2 className="text-lg font-semibold mb-4 text-gray-800">
-                    Related Articles
-                  </h2>
-                  <ul className="space-y-2">
-                    {relatedArticles.map((article, idx) => (
-                      <li key={idx}>
-                        <a
-                          href={article.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-700 hover:underline"
-                        >
-                          {article.title}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-            <div className="max-w-2xl mx-auto bg-white p-4 rounded shadow mb-8">
-              {/* Show the Video Iframe */}
-              <div className="">
-                {videoPlacement != "" ? (
-                  <div>
-                    <iframe src="" width="600" height="400"></iframe>
-                  </div>
-                ) : (
-                  <Image
-                    src={videoReplacementImage}
-                    alt="Landscape picture"
-                    width={800}
-                    height={500}
-                  />
-                )}
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column: Video (2/3 width) */}
+          <div className="lg:col-span-2 bg-[#E5D7C6] rounded-lg shadow p-4">
+            <h1 className="text-2xl font-bold mb-6 ">Summary</h1>
 
-              <h2 className=" my-4 text-lg font-semibold mb-4 text-gray-800">
-                Transcript
-              </h2>
-              <p className="text-gray-800">{summary}</p>
-            </div>
+            <h2 className="text-lg font-semibold mb-2">Video</h2>
+
+            {videoPlacement ? (
+              <iframe
+                src={videoPlacement}
+                width="100%"
+                height="300"
+                className="rounded border"
+              />
+            ) : (
+              <Image
+                src={videoReplacementImage}
+                alt="Video Unavailable"
+                width={800}
+                height={400}
+                className="rounded"
+              />
+            )}
+            {/* Full width: Related Articles */}
+            {relatedArticles.length > 0 && (
+              <div className="lg:col-span-3 mt-4 p-4 ">
+                <h2 className="text-lg font-semibold mb-4">Related Articles</h2>
+                <ul className="space-y-2">
+                  {relatedArticles.map((article, idx) => (
+                    <li key={idx}>
+                      <a
+                        href={article.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className=" hover:text-[#36362E] text-[#5B5B4D]"
+                      >
+                        {idx + 1}.{" "}
+                        <span className="underline">{article.title}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
-        </>
+
+          {/* Right Column: Transcript (1/3 width) */}
+          <div className="bg-[#E5D7C6] rounded-lg shadow p-4 h-fit">
+            <h2 className="text-lg font-semibold mb-2">Transcript</h2>
+            <p className="text-[#5B5B4D] leading-relaxed whitespace-pre-wrap">
+              {summary}
+            </p>
+          </div>
+        </div>
       )}
     </main>
   );

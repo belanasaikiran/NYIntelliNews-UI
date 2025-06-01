@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased 	bg-[#CBB8A9]`}
       >
         <NavBar />
         <div className="mt-4 max-w-6xl mx-auto flex justify-between items-center">

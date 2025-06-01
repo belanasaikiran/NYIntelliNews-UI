@@ -25,12 +25,14 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   return (
     <div
       onClick={() => goToSummary(title)}
-      className="block w-full text-left bg-blue-100 hover:bg-blue-200 rounded px-4 py-2 text-blue-800 font-medium transition cursor-pointer"
+      className="block w-full text-left bg-[#E5D7C6] hover:bg-[#36362E] hover:text-[#E5D7C6] rounded px-4 py-3 transition cursor-pointer shadow-sm"
     >
       <div className="font-semibold">{title}</div>
-      <div className="text-sm text-gray-700">{publisher}</div>
+      <div className="text-sm text-[#5B5B4D] hover:text-[#57574D]">
+        {publisher}
+      </div>
       {confidenceScore !== undefined && (
-        <div className="text-xs text-gray-500">
+        <div className="text-xs text-[#7D7D6E]">
           Confidence: {(confidenceScore * 100).toFixed(1)}%
         </div>
       )}
