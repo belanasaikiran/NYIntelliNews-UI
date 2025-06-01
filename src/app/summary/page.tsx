@@ -9,6 +9,8 @@ type Article = {
   url: string;
 };
 
+import { sendMessage } from "../Components/TavusWidget";
+
 export default function SummaryPage() {
   const searchParams = useSearchParams();
   const title = searchParams?.get("title");
@@ -17,6 +19,8 @@ export default function SummaryPage() {
   const [loading, setLoading] = useState(false);
   const [videoPlacement, setVideoPlacement] = useState("");
   const [serverTitle, setServerTitle] = useState("");
+  const [conversationId, setConversationId] = useState<string>("");
+  const [conversationUrl, setConversationUrl] = useState<string>("");
 
   useEffect(() => {
     if (!title) return;
@@ -34,6 +38,12 @@ export default function SummaryPage() {
         setSummary(data.summary);
         setRelatedArticles(data.relatedArticlesRaw || []);
         setServerTitle(data.givenTitle);
+
+        const convRes = await fetch(`${backendURL}/api/getConversation`);
+        const convData = await convRes.json();
+        setConversationId(convData.conversationId);
+        setConversationUrl(convData.conversationUrl);
+        sendMessage(conversationId, conversationUrl, data.summary);
       } catch (err) {
         console.error("Failed to fetch summary data", err);
       } finally {
