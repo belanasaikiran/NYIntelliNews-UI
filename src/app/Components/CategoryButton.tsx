@@ -1,20 +1,27 @@
 "use client";
 import React from "react";
+import { LucideIcon } from "lucide-react";
 
 interface CategoryButtonProps {
   label: string;
   onClick: () => void;
+  icon?: LucideIcon;
 }
 
-const CategoryButton: React.FC<CategoryButtonProps> = ({ label, onClick }) => {
+const CategoryButton: React.FC<CategoryButtonProps> = ({
+  label,
+  onClick,
+  icon: Icon,
+}) => {
   return (
     <div
-      className="flex items-center bg-white rounded-lg shadow px-4 py-2 overflow-x-auto cursor-pointer hover:bg-blue-50 transition"
+      className="flex flex-col items-center justify-center text-[#36362E] bg-[#E5D7C6] hover:bg-[#36362E] hover:text-[#E5D7C6] rounded-lg shadow p-4 cursor-pointer  transition text-center"
       onClick={onClick}
     >
-      <span className="text-lg font-semibold capitalize text-gray-700">{label}</span>
-      <div className="flex-1 border-b border-dashed border-gray-200 mx-4"></div>
-      <button className="text-blue-600 hover:underline text-sm">Explore</button>
+      {Icon && <Icon className="w-8 h-8  mb-2" />}
+      <span className="text-base font-medium capitalize ">
+        {label.replace("-", " ")}
+      </span>
     </div>
   );
 };

@@ -2,6 +2,62 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import CategoryButton from "./Components/CategoryButton";
+import type { LucideIcon } from "lucide-react";
+import {
+  BookOpen,
+  Briefcase,
+  Film,
+  Globe,
+  Heart,
+  Home as HomeIcon,
+  Newspaper,
+  ShoppingBag,
+  Utensils,
+  Users,
+  FlaskConical,
+  Cpu,
+  Building,
+  Theater,
+  Plane,
+  Banknote,
+  Shirt,
+  Brain,
+  Camera,
+  ScrollText,
+  CircleDollarSign,
+  Landmark,
+  LayoutDashboard,
+  Car,
+} from "lucide-react";
+
+const categoryIcons: { [key: string]: LucideIcon } = {
+  arts: Camera,
+  automobiles: Car,
+  books: BookOpen,
+  business: Briefcase,
+  fashion: Shirt,
+  food: Utensils,
+  health: Heart,
+  home: HomeIcon,
+  insider: Users,
+  magazine: ScrollText,
+  movies: Film,
+  nyregion: Globe,
+  obituaries: Newspaper,
+  opinion: Brain,
+  politics: Landmark,
+  realestate: Building,
+  science: FlaskConical,
+  sports: CircleDollarSign,
+  sundayreview: Newspaper,
+  technology: Cpu,
+  theater: Theater,
+  "t-magazine": LayoutDashboard,
+  travel: Plane,
+  upshot: Banknote,
+  us: Globe,
+  world: Globe,
+};
 
 const sections = [
   "arts",
@@ -31,38 +87,45 @@ const sections = [
   "us",
   "world",
 ];
-
 export default function Home() {
   const [prompt, setPrompt] = useState("");
   const router = useRouter();
 
-  const handleCategoryClick = (section: string) => {
-    router.push(`/results?category=${encodeURIComponent(section)}`);
+  const handleCategoryClick = async (section: string) => {
+    // ✅ Navigate to results page with category
+    router.push(`/categoryResults?category=${encodeURIComponent(section)}`);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handlePromptSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!prompt.trim()) return;
-    router.push(`/results?prompt=${encodeURIComponent(prompt)}`);
+    router.push(`/categoryResults?prompt=${encodeURIComponent(prompt.trim())}`);
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
-      <h1 className="text-3xl font-bold mb-8 text-center">IntelliNews</h1>
-      <div className="space-y-2 mb-10">
-        {sections.map((section) => (
+    <main className="min-h-screen p-6 grid lg:grid-cols-2">
+      <div
+        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4
+        gap-4 mb-10"
+      >
+        {sections.map((category) => (
           <CategoryButton
-            key={section}
-            label={section}
-            onClick={() => handleCategoryClick(section)}
+            key={category}
+            label={category}
+            icon={categoryIcons[category]} // ✅ Pass icon here
+            onClick={() => handleCategoryClick(category)}
           />
         ))}
       </div>
+
       <form
-        onSubmit={handleSubmit}
-        className="max-w-xl mx-auto bg-white rounded-lg shadow p-6 mb-8"
+        onSubmit={handlePromptSubmit}
+        className="w-full mx-8  rounded-lg shadow p-6 mb-8"
       >
-        <label htmlFor="prompt" className="block text-lg font-medium mb-2">
+        <label
+          htmlFor="prompt"
+          className="block text-[#36362E]  text-lg font-medium mb-2"
+        >
           Enter your prompt
         </label>
         <input
@@ -71,11 +134,11 @@ export default function Home() {
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Ask IntelliNews anything..."
-          className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full border text-gray-800 border-[#36362E] rounded px-4 py-2 focus:outline-none focus:ring-2 focus:border-[#36362E] bg-[#E5D7C6]"
         />
         <button
           type="submit"
-          className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+          className="mt-4 w-full bg-[#36362E] text-white py-2 rounded hover:bg-[#E5D7C6] hover:text-[#36362E] transition"
         >
           Submit
         </button>
