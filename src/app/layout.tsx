@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import NavBar from "./Components/NavBar"; // ✅ Add this line
 import "./globals.css";
+import TavusWidget from "./Components/TavusWidget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,10 @@ export default function RootLayout({
         <div className="mt-4 max-w-6xl mx-auto flex justify-between items-center">
           {children}
         </div>
+        
+        <TavusWidget />
+        
+        
       </body>
     </html>
   );

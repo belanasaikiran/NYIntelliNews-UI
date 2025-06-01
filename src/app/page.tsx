@@ -133,7 +133,7 @@ export default function Home() {
 
       <form
         onSubmit={handlePromptSubmit}
-        className="w-full mx-8  rounded-lg shadow p-6 mb-8"
+        className="w-fit h-fit mx-8  rounded-lg shadow p-6 mb-8"
       >
         <label
           htmlFor="prompt"
