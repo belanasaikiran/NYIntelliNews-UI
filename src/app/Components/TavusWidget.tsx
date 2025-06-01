@@ -1,8 +1,8 @@
 "use client";
-
 import { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import DailyIframe from "@daily-co/daily-js";
 import { backendURL } from "@/constants";
+
 
 // utils/sendMessage.ts
 export async function sendMessage(
@@ -42,17 +42,15 @@ export async function sendMessage(
 }
 
 export default function TavusWidget() {
-  const pathname = usePathname();
+  const containerRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<HTMLDivElement>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
+  const [conversationUrl, setConversationUrl] = useState<string>("");
   const [position, setPosition] = useState({ x: 20, y: 20 });
   const [dragging, setDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
 
-  const [conversationUrl, setConversationUrl] = useState<string>("");
-  const [call, setCall] = useState<any>(null);
-
+  // Handle mouse dragging
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!dragging) return;
@@ -66,6 +64,7 @@ export default function TavusWidget() {
 
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
+
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
@@ -83,58 +82,64 @@ export default function TavusWidget() {
     }
   };
 
-  // Optional: Hide on specific pages
-  if (pathname === "/somePageToHide") return null;
-
-  // Load Daily SDK & start conversation
+  // Fetch conversation on load
   useEffect(() => {
     const initConversation = async () => {
-      const res = await fetch(`${backendURL}/api/initConv`);
-      console.log("Result: init: ", res);
-      const data = await res.json();
-      setConversationUrl(data.conversationUrl);
-
-      // // Load Daily SDK
-      // const script = document.createElement("script");
-      // script.src = "https://unpkg.com/@daily-co/daily-js";
-      // script.async = true;
-      // script.onload = async () => {
-      //   const daily = (window as any).Daily;
-      //   const frame = daily.createFrame({
-      //     iframeStyle: {
-      //       width: "1px",
-      //       height: "1px",
-      //       position: "absolute",
-      //       left: "-9999px",
-      //     },
-      //   });
-      //   await frame.join({ url: data.conversationUrl });
-      //   setCall(frame);
-      // };
-      // document.body.appendChild(script);
+      try {
+        const res = await fetch(`${backendURL}/api/initConv`);
+        const data = await res.json();
+        setConversationUrl(data.url);
+        console.log("conversationUrl:", conversationUrl);
+      } catch (error) {
+        console.error("Failed to get conversation URL", error);
+      }
     };
+
+    initConversation();
   }, []);
+
+  // Load Daily SDK and join the room
+  useEffect(() => {
+    if (!conversationUrl || !containerRef.current) return;
+
+    const callFrame = DailyIframe.createFrame({
+      iframeStyle: {
+        width: "100%",
+        height: "360px",
+        borderRadius: "0.5rem",
+        border: "1px solid #ccc",
+      },
+    });
+
+    callFrame.join({ url: conversationUrl });
+
+    const iframeEl = callFrame.iframe();
+    if (iframeEl) {
+      containerRef.current.appendChild(iframeEl);
+    }
+  }, [conversationUrl]);
 
   return (
     <div
       ref={widgetRef}
       onMouseDown={handleMouseDown}
-      className="fixed z-50 cursor-move"
+      className="fixed z-50 cursor-move bg-white rounded-lg shadow-lg"
       style={{
         left: position.x,
         top: position.y,
         width: 320,
       }}
     >
-      <iframe
-        src={conversationUrl}
-        width="100%"
-        height="360"
-        className="rounded-lg shadow-lg border border-gray-300"
-        allow="autoplay; encrypted-media"
-        allowFullScreen
-        title="Tavus AI Persona"
-      ></iframe>
+      <div
+        ref={containerRef}
+        className="rounded-lg border border-gray-300 min-h-[360px] bg-white"
+      >
+        {!conversationUrl && (
+          <div className="w-full h-[360px] flex items-center justify-center text-gray-500">
+            Loading Tavus Video...
+          </div>
+        )}
+      </div>
     </div>
   );
 }
