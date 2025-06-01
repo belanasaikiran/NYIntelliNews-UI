@@ -16,6 +16,7 @@ export default function SummaryPage() {
   const [relatedArticles, setRelatedArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(false);
   const [videoPlacement, setVideoPlacement] = useState("");
+  const [serverTitle, setServerTitle] = useState("");
 
   useEffect(() => {
     if (!title) return;
@@ -32,6 +33,7 @@ export default function SummaryPage() {
         const data = await res.json();
         setSummary(data.summary);
         setRelatedArticles(data.relatedArticlesRaw || []);
+        setServerTitle(data.givenTitle);
       } catch (err) {
         console.error("Failed to fetch summary data", err);
       } finally {
@@ -52,7 +54,7 @@ export default function SummaryPage() {
           <div className="lg:col-span-2 bg-[#E5D7C6] rounded-lg shadow p-4">
             <h1 className="text-2xl font-bold mb-6 ">Summary</h1>
 
-            <h2 className="text-lg font-semibold mb-2">Video</h2>
+            <h2 className="text-lg font-semibold mb-2">{serverTitle}</h2>
 
             {videoPlacement ? (
               <iframe

@@ -99,7 +99,7 @@ export default function Home() {
   const handlePromptSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!prompt.trim()) return;
-    router.push(`/results?prompt=${encodeURIComponent(prompt.trim())}`);
+    router.push(`/categoryResults?prompt=${encodeURIComponent(prompt.trim())}`);
   };
 
   return (
@@ -124,7 +124,7 @@ export default function Home() {
       >
         <label
           htmlFor="prompt"
-          className="block text-gray-700 text-lg font-medium mb-2"
+          className="block text-[#36362E]  text-lg font-medium mb-2"
         >
           Enter your prompt
         </label>
@@ -134,7 +134,7 @@ export default function Home() {
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Ask IntelliNews anything..."
-          className="w-full border text-gray-800 border-[#36362E] rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full border text-gray-800 border-[#36362E] rounded px-4 py-2 focus:outline-none focus:ring-2 focus:border-[#36362E] bg-[#E5D7C6]"
         />
         <button
           type="submit"
