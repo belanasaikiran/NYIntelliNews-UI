@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { useRouter } from "next/navigation";
 
 interface ArticleCardProps {
   title: string;
@@ -8,20 +9,32 @@ interface ArticleCardProps {
   confidenceScore?: number;
 }
 
-const ArticleCard: React.FC<ArticleCardProps> = ({ title, url, publisher, confidenceScore }) => {
+const ArticleCard: React.FC<ArticleCardProps> = ({
+  title,
+  url,
+  publisher,
+  confidenceScore,
+}) => {
+  const router = useRouter();
+
+  const goToSummary = async (title: string) => {
+    // ✅ Navigate to results page with category
+    router.push(`/summary?title=${encodeURIComponent(title)}`);
+  };
+
   return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
+    <div
+      onClick={() => goToSummary(title)}
       className="block w-full text-left bg-blue-100 hover:bg-blue-200 rounded px-4 py-2 text-blue-800 font-medium transition cursor-pointer"
     >
       <div className="font-semibold">{title}</div>
       <div className="text-sm text-gray-700">{publisher}</div>
       {confidenceScore !== undefined && (
-        <div className="text-xs text-gray-500">Confidence: {(confidenceScore * 100).toFixed(1)}%</div>
+        <div className="text-xs text-gray-500">
+          Confidence: {(confidenceScore * 100).toFixed(1)}%
+        </div>
       )}
-    </a>
+    </div>
   );
 };
 
