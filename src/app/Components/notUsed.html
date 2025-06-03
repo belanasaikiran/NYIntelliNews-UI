@@ -1,0 +1,36 @@
+<html>
+    <script crossorigin src="https://unpkg.com/@daily-co/daily-js"></script>
+    <body>
+        <!-- Add input field and send button -->
+        <input type="text" id="messageInput" placeholder="Enter your message" />
+        <button onclick="sendAppMessage()">Send Message</button>
+
+        <script>
+            call = window.Daily.createFrame();
+            call.on("app-message", (event) => {
+                console.log("app-message", event);
+            });
+
+            call.join({ url: "https://tavus.daily.co/c4b218b3f758" });
+
+            function sendAppMessage() {
+                const messageInput = document.getElementById("messageInput");
+                const message = messageInput.value;
+                if (message) {
+                    const interaction = {
+                        message_type: "conversation",
+                        event_type: "conversation.echo",
+                        conversation_id: "c4b218b3f758",
+                        properties: {
+                            text: `${message}`,
+                        },
+                    };
+                    const hi = call.sendAppMessage(interaction, "*");
+                    console.log("Sending message: ", hi);
+                    console.log("Sent message: ", interaction);
+                    messageInput.value = "";
+                }
+            }
+        </script>
+    </body>
+</html>

@@ -3,8 +3,32 @@ import { useEffect, useRef, useState } from "react";
 import DailyIframe from "@daily-co/daily-js";
 import { backendURL } from "@/constants";
 
+// Global reference to store the call instance
+let activeCallFrame: any = null;
 
-// utils/sendMessage.ts
+// Send message to the active call
+export function sendTavusMessage(
+  conversationId: string,
+  message: string,
+) {
+  if (!activeCallFrame) {
+    console.error("No active call to send message to");
+    return false;
+  }
+
+  const payload = {
+    message_type: "conversation",
+    event_type: "conversation.echo",
+    conversation_id: conversationId,
+    properties: { text: message },
+  };
+
+  activeCallFrame.sendAppMessage(payload, "*");
+  console.log("Message sent to Tavus");
+  return true;
+}
+
+// Legacy function - kept for reference
 export async function sendMessage(
   conversationId: string,
   url: string,
@@ -45,42 +69,9 @@ export default function TavusWidget() {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<HTMLDivElement>(null);
 
-  const [conversationUrl, setConversationUrl] = useState<string>("");
-  const [position, setPosition] = useState({ x: 20, y: 20 });
-  const [dragging, setDragging] = useState(false);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-
-  // Handle mouse dragging
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!dragging) return;
-      setPosition({
-        x: e.clientX - offset.x,
-        y: e.clientY - offset.y,
-      });
-    };
-
-    const handleMouseUp = () => setDragging(false);
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [dragging, offset]);
-
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = widgetRef.current?.getBoundingClientRect();
-    if (rect) {
-      setOffset({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      });
-      setDragging(true);
-    }
-  };
+  const [conversationUrl, setConversationUrl] = useState<string>("null");
+  const [conversationId, setConversationId] = useState<string>("");
+  // No position state needed for fixed positioning
 
   // Fetch conversation on load
   useEffect(() => {
@@ -89,7 +80,14 @@ export default function TavusWidget() {
         const res = await fetch(`${backendURL}/api/initConv`);
         const data = await res.json();
         setConversationUrl(data.url);
-        console.log("conversationUrl:", conversationUrl);
+        
+        // Extract conversation ID from URL
+        const urlParts = data.url.split('/');
+        const id = urlParts[urlParts.length - 1];
+        setConversationId(id);
+        
+        console.log("conversationUrl:", data.url);
+        console.log("conversationId:", id);
       } catch (error) {
         console.error("Failed to get conversation URL", error);
       }
@@ -100,7 +98,7 @@ export default function TavusWidget() {
 
   // Load Daily SDK and join the room
   useEffect(() => {
-    if (!conversationUrl || !containerRef.current) return;
+    if (conversationUrl == "null" || !containerRef.current) return;
 
     const callFrame = DailyIframe.createFrame({
       iframeStyle: {
@@ -111,32 +109,38 @@ export default function TavusWidget() {
       },
     });
 
+    // Set up event listener for app messages
+    callFrame.on("app-message", (event: any) => {
+      console.log("Received app message:", event);
+      // You can handle incoming messages here
+    });
+
     callFrame.join({ url: conversationUrl });
+
+    // Store the callFrame in the global reference for use by sendTavusMessage
+    activeCallFrame = callFrame;
 
     const iframeEl = callFrame.iframe();
     if (iframeEl) {
       containerRef.current.appendChild(iframeEl);
     }
+
+    // Cleanup when component unmounts
+    return () => {
+      callFrame.leave();
+      activeCallFrame = null;
+    };
   }, [conversationUrl]);
 
   return (
-    <div
-      ref={widgetRef}
-      onMouseDown={handleMouseDown}
-      className="fixed z-50 cursor-move bg-white rounded-lg shadow-lg"
-      style={{
-        left: position.x,
-        top: position.y,
-        width: 320,
-      }}
-    >
+    <div ref={widgetRef} className=" bg-white rounded-lg shadow-lg">
       <div
         ref={containerRef}
         className="rounded-lg border border-gray-300 min-h-[360px] bg-white"
       >
         {!conversationUrl && (
           <div className="w-full h-[360px] flex items-center justify-center text-gray-500">
-            Loading Tavus Video...
+            Connecting to News Reader...
           </div>
         )}
       </div>

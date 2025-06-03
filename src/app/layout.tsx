@@ -30,13 +30,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased 	bg-[#CBB8A9]`}
       >
         <NavBar />
+
+        <div className="mt-4 max-w-6xl mx-auto ">
+          <TavusWidget />
+        </div>
         <div className="mt-4 max-w-6xl mx-auto flex justify-between items-center">
           {children}
         </div>
-        
-        <TavusWidget />
-        
-        
       </body>
     </html>
   );

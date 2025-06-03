@@ -9,7 +9,7 @@ type Article = {
   url: string;
 };
 
-import { sendMessage } from "../Components/TavusWidget";
+import { sendMessage, sendTavusMessage } from "../Components/TavusWidget";
 
 export default function SummaryPage() {
   const searchParams = useSearchParams();
@@ -43,7 +43,20 @@ export default function SummaryPage() {
         const convData = await convRes.json();
         setConversationId(convData.conversationId);
         setConversationUrl(convData.conversationUrl);
-        sendMessage(conversationId, conversationUrl, data.summary);
+        const handleSendMessage = () => {
+          // You need to know the conversation ID
+          const conversationId = "your-conversation-id"; // You may need to pass this from TavusWidget
+          const message = data.summary;
+
+          const success = sendTavusMessage(conversationId, message);
+          if (success) {
+            console.log("Message sent successfully");
+          } else {
+            console.error("Failed to send message - no active call");
+          }
+        };
+        handleSendMessage();
+        // sendMessage(conversationId, conversationUrl, data.summary);
       } catch (err) {
         console.error("Failed to fetch summary data", err);
       } finally {
@@ -59,14 +72,14 @@ export default function SummaryPage() {
       {loading ? (
         <div className="text-center font-medium">Loading...</div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="gap-6">
           {/* Left Column: Video (2/3 width) */}
-          <div className="lg:col-span-2 bg-[#E5D7C6] rounded-lg shadow p-4">
+          <div className=" bg-[#E5D7C6] rounded-lg shadow p-4">
             <h1 className="text-2xl font-bold mb-6 ">Summary</h1>
 
             <h2 className="text-lg font-semibold mb-2">{serverTitle}</h2>
 
-            {videoPlacement ? (
+            {/* {videoPlacement ? (
               <iframe
                 src={videoPlacement}
                 width="100%"
@@ -81,11 +94,19 @@ export default function SummaryPage() {
                 height={400}
                 className="rounded"
               />
-            )}
+            )} */}
             {/* Full width: Related Articles */}
+
+            <div className="bg-[#E5D7C6] rounded-lg shadow p-4 h-fit">
+              <h2 className="text-lg font-semibold mb-2">Transcript</h2>
+              <p className="text-[#5B5B4D] leading-relaxed whitespace-pre-wrap">
+                {summary}
+              </p>
+            </div>
+            <h2 className="text-lg font-semibold my-4">Related Articles</h2>
+
             {relatedArticles.length > 0 && (
               <div className="lg:col-span-3 mt-4 p-4 ">
-                <h2 className="text-lg font-semibold mb-4">Related Articles</h2>
                 <ul className="space-y-2">
                   {relatedArticles.map((article, idx) => (
                     <li key={idx}>
@@ -106,12 +127,6 @@ export default function SummaryPage() {
           </div>
 
           {/* Right Column: Transcript (1/3 width) */}
-          <div className="bg-[#E5D7C6] rounded-lg shadow p-4 h-fit">
-            <h2 className="text-lg font-semibold mb-2">Transcript</h2>
-            <p className="text-[#5B5B4D] leading-relaxed whitespace-pre-wrap">
-              {summary}
-            </p>
-          </div>
         </div>
       )}
     </main>
